@@ -20,8 +20,6 @@ SELECT
 	acs14cn00.Asian_Pacific_Islander_2014,
 	acs14cn00.Black_Alone_2014,
 	acs14cn00.Hispanic_Alone_2014,
-	acs14cn00.MinorityPopulation_ACS2014,
-	acs14cn00.Pop65plus_ACS2014,
 	dl.Disadvantage_Level,
 	coc.COCFLAG_2017
 FROM 

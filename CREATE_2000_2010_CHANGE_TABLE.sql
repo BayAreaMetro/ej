@@ -1,6 +1,7 @@
 CREATE VIEW EJ_2016.year_2000_2010_change AS
 SELECT
 	acs14cn00.GEOID,
+	acs14cn00.PopChange,
 	acs14cn00.TotalPopPctChange,
 	acs14cn00.LowIncomePopChange,
 	acs14cn00.LowIncomePopPctChange,
@@ -21,7 +22,6 @@ SELECT
 	acs14cn00.BlackAlonePopPctChange,
 	acs14cn00.BlackPopChange,
 	acs14cn00.WhitePopChange,
-	acs14cn00.WhiteAlonePopPctChange,
-	acs14cn00.PopChange
+	acs14cn00.WhiteAlonePopPctChange
 From 
 EJ_2016.EJ_Select_Variables_ACS2014_Census2000_Compare as acs14cn00
