@@ -1,5 +1,6 @@
 CREATE VIEW EJ_2016.year_2010_commuter_data AS
-SELECT CountyFip, 
+SELECT CountyFip,
+Tracts,
 TotalCommuters,
 EarlyMorning
 ShareEM, 
