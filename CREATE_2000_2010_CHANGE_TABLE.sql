@@ -44,6 +44,10 @@ SELECT
 	acs14cn00.White_Alone_2000,
 	acs14cn00.White_Alone_2014,	
 	acs14cn00.WhitePopChange,
-	acs14cn00.WhiteAlonePopPctChange
+	acs14cn00.WhiteAlonePopPctChange,
+	acs14cn00.Hispanic_Alone_2000,
+	acs14cn00.Hispanic_Alone_2014,
+	acs14cn00.Hispanic_LatinoPopChange,
+	acs14cn00.HispanicLatinoPopPctChange
 From 
 EJ_2016.EJ_Select_Variables_ACS2014_Census2000_Compare as acs14cn00
