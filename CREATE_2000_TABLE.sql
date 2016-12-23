@@ -25,7 +25,6 @@ SELECT
 			THEN (cn00s.POP_HUS_RENT50/dec22upd.H069001) 
 		ELSE -9999 
 		END AS 'POP_HUS_RENT50_SOT', 
-	cn00s.POP_HUS_RENT50/cn00s.TotalPopulation as 'POP_HUS_RENT50_SOT',
 	cn00s.Asian_Pacific_Islander,
 	cn00s.Black_Alone,
 	cn00s.Hispanic_Latino
