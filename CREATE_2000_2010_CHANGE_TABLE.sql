@@ -50,4 +50,8 @@ SELECT
 	acs14cn00.Hispanic_LatinoPopChange,
 	acs14cn00.HispanicLatinoPopPctChange
 From 
-EJ_2016.EJ_Select_Variables_ACS2014_Census2000_Compare as acs14cn00
+EJ_2016.EJ_Select_Variables_ACS2014_Census2000_Compare as acs14cn00 LEFT JOIN
+EJ_2016.update_2014_acs_dec22 AS acsupdate ON acs14cn00.GEOID = CONCAT (acsupdate.state, acsupdate.county, acsupdate.tract) 
+--as mentioned in the git commit, the following join is commented out because it doesn't seem to result in the right number of census tracts
+--LEFT JOIN EJ_2016.update_2014_acs_dec22_spfam_chg as chg_upd1 on CONCAT (acsupdate.state, acsupdate.county, acsupdate.tract) = chg_upd1.GEOID10
+--LEFT JOIN EJ_2016.update_2014_acs_dec22_pop_hus_rent_chg as chg_upd2 ON chg_upd1.GEOID10 = chg_upd2.GEOID10
