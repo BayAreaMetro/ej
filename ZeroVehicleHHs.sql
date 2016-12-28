@@ -3,7 +3,7 @@ zvhh.OBJECTID,
 zvhh.GEOID, 
 zvhh.county, 
 zvhh.tract, 
-zvhh.B25044_001E + zvhh.B25044_009E as TotalHHs_ACS2014, 
+zvhh.B25044_001E as TotalHHs_ACS2014, 
 zvhh.B25044_003E + zvhh.B25044_010E as TotalZVHHs_ACS2014,
 Case When zvhh.B25044_001E + zvhh.B25044_009E = 0 Then 0 Else Cast((Cast(zvhh.B25044_003E + zvhh.B25044_010E as numeric(18,2)))/(Cast(zvhh.B25044_001E + zvhh.B25044_009E as numeric(18,2))) as numeric(18,3)) End as ZVHHSOT,
 t.shape  
@@ -17,7 +17,7 @@ zvhh.OBJECTID,
 zvhh.GEOID, 
 zvhh.county, 
 zvhh.tract, 
-zvhh.H044001 + zvhh.H044009 as TotalHHs_C2K,  
+zvhh.H044001 as TotalHHs_C2K,  
 zvhh.H044003 + zvhh.H044010 as TotalZVHHs_C2K, 
 t.Shape
 FROM     
