@@ -14,17 +14,21 @@ SELECT
 		WHEN dec22upd.P017001 > 0 
 			THEN ((dec22upd.P017010 + dec22upd.P017016)/dec22upd.P017001) 
 		ELSE -9999 
-		END AS 'SPFAM_SOT', 
+	END AS 'SPFAM_SOT', 
 	cn00s.POP_LEP,
 	cn00s.POP_LEP/cn00s.TotalPopulation as 'POP_LEP_SOT',
 	cn00s.POP_ZVHHS,
-	cn00s.POP_ZVHHS/cn00s.TotalPopulation as 'POP_ZVHHS_SOT',
+	CASE 
+		WHEN cn00s.TotalHouseholds > 0 
+			THEN cn00s.POP_ZVHHS/cn00s.TotalHouseholds 
+		ELSE -9999
+	END as 'POP_ZVHHS_SOT',
 	cn00s.POP_HUS_RENT50,
 	CASE 
 		WHEN dec22upd.H069001 > 0 
 			THEN (cn00s.POP_HUS_RENT50/dec22upd.H069001) 
 		ELSE -9999 
-		END AS 'POP_HUS_RENT50_SOT', 
+	END AS 'POP_HUS_RENT50_SOT', 
 	cn00s.Asian_Pacific_Islander,
 	cn00s.Black_Alone,
 	cn00s.Hispanic_Latino
