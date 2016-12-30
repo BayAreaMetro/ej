@@ -26,7 +26,10 @@ SELECT
 	acs14cn00.White_Alone_2014,	
 	acs14cn00.Hispanic_Alone_2000,
 	acs14cn00.Hispanic_Alone_2014,
-	acs14cn00.Interpolated --e.g. tract is 'W' (Wholly) or 'P' (Partially) within some other tract
+	tract_reference.Interpolated, --e.g. Boolean or tract is 'W' (Wholly) or 'P' (Partially) within some other tract
+	other_table.PDA, --boolean within (acknowledging this may be a partial intersection)
+	other_table.TPA, --boolean within (acknowledging this may be a partial intersection)
+	other_table.CoC, --boolean within (acknowledging this may be a partial intersection)
 From 
 EJ_2016.EJ_Select_Variables_ACS2014_Census2000_Compare as acs14cn00 LEFT JOIN
 EJ_2016.update_2014_acs_dec22 AS acsupdate ON acs14cn00.GEOID = CONCAT (acsupdate.state, acsupdate.county, acsupdate.tract) 
