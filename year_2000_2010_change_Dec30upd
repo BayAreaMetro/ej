@@ -1,0 +1,105 @@
+
+--==============================================================================================
+ /*
+ Script Purpose: To create a view which provides census variables for 2000 and 2010, in
+ terms of 2010 tract boundaries. Data provided within these variables can be used to understand
+ changes between 2000 and 2010. 
+ 
+ This view should not break 2000 populations into two seperate columns, instead using logic to 
+ place populations for whole and partial tracts into one column. 
+ 
+ Created On: 12/30/2016
+ Created By: Josh Croff 
+ */
+--==============================================================================================
+
+CREATE VIEW [EJ_2016].[year_2000_2010_change_Dec30upd]
+SELECT count(distinct(Compare.GEOID))  
+Compare.GEOID, 
+Compare.county,
+CASE 
+	WHEN Compare.Part00 = 'W' 
+		THEN 'FALSE' 
+	ELSE 'TRUE' 
+END as '2000Pop_Interpolated',  
+CASE 
+	WHEN Compare.Relative_Pop_2000 IS NOT NULL 
+		THEN Compare.Relative_Pop_2000
+	ELSE Compare.Pop_2000
+END as Pop_2000,   
+Compare.TotalPop_ACS2014, 
+Compare.White_Alone_2014,
+CASE 
+	WHEN Compare.Relative_White_Alone_2000 IS NOT NULL
+		THEN Compare.Relative_White_Alone_2000
+	ELSE Compare.White_Alone_2000
+END as White_Alone_2000,  
+Compare.Black_Alone_2014, 
+CASE 
+	WHEN Compare.Relative_Black_Alone_2000 IS NOT NULL
+		THEN Compare.Relative_Black_Alone_2000
+	ELSE Compare.Black_Alone_2000
+END as Black_Alone_2000,  
+Compare.Hispanic_Alone_2014,
+CASE 
+	WHEN Compare.Relative_Hispanic_Alone_2000 IS NOT NULL
+		THEN Compare.Relative_Hispanic_Alone_2000
+	ELSE Compare.Hispanic_Alone_2000 
+END as Hispanic_Alone_2000, 
+Compare.Asian_Pacific_Islander_2014,
+CASE
+	WHEN Compare.Relative_Asian_Pacific_Islander_2000 IS NOT NULL
+		THEN Compare.Relative_Asian_Pacific_Islander_2000
+	ELSE Compare.Asian_Pacific_Islander_2000
+END as Asian_Pacific_Islander_2000, 
+Compare.POP_ZVHHS_ACS2014,
+CASE 
+	WHEN Compare.Relative_POP_ZVHHS_2000 IS NOT NULL
+		THEN Compare.Relative_POP_ZVHHS_2000 
+	ELSE Compare.POP_ZVHHS_2000
+END as POP_ZVHHS_2000,   
+Compare.POP_LEP_ACS2014,
+CASE 
+	WHEN Compare.Relative_POP_LEP_2000 IS NOT NULL
+		THEN Compare.Relative_POP_LEP_2000 
+	ELSE Compare.POP_LEP_2000
+END as POP_LEP_2000,  
+Compare.SPFAM_ACS2014, 
+CASE 
+	WHEN Compare.Relative_SPFAM_2000 IS NOT NULL
+		THEN Compare.Relative_SPFAM_2000
+	ELSE Compare.SPFAM_2000
+END AS SPFAM_2000,  
+Compare.POP_HUS_RENT50_ACS2014,
+CASE 
+	WHEN Compare.POP_HUS_RENT50_2000 IS NOT NULL
+		THEN Compare.POP_HUS_RENT50_2000
+	ELSE Compare.POP_HUS_RENT50_2000
+END as POP_HUS_RENT50_2000,  
+Compare.Pop65plus_ACS2014, 
+CASE 
+	WHEN Compare.Relative_Pop65Plus_2000 IS NOT NULL
+		THEN Compare.Relative_Pop65Plus_2000
+	ELSE Compare.Pop65plus_2000 
+END as Pop65Plus_2000,  
+Compare.LowIncomePop_ACS2014,
+CASE
+	WHEN Compare.Relative_LowIncomePop_2000 IS NOT NULL 
+		THEN Compare.Relative_LowIncomePop_2000
+	ELSE Compare.LowIncomePop_2000
+END as LowIncomePop_2000,  
+Compare.MinorityPopulation_ACS2014, 
+CASE 
+	WHEN Compare.Relative_MinorityPop_2000 IS NOT NULL 
+		THEN Compare.Relative_MinorityPop_2000
+	ELSE Compare.MinorityPop_2000 
+END as MinorityPop_2000, 
+DL.Disadvantage_Level, 
+COC2014.COCFLAG_2017
+FROM [EJ_2016].[EJ_SELECT_VARIABLES_C2000_ACS2014_COMPARE_DEC28] AS Compare
+left join  
+[EJ_2016].[BAYAREA_TRACTS_2010] AS Tracts2010 on Tracts2010.GEOID = Compare.GEOID
+LEFT OUTER JOIN
+ACS_2014_ALL_COC_DATA_TRACTS AS COC2014 ON Compare.GEOID = COC2014.GEOID 
+LEFT OUTER JOIN
+DISADVANTAGE_LEVEL AS DL ON Compare.GEOID = DL.GEOID
