@@ -1,0 +1,81 @@
+--==============================================================================================
+ /*
+ Script Purpose: To create a view which provides census variables for 2000 and 2010, in
+ terms of 2010 tract boundaries. Data provided within these variables can be used to understand
+ changes between 2000 and 2010. 
+ 
+ This view should not break 2000 populations into two seperate columns, instead using logic to 
+ place populations for whole and partial tracts into one column. 
+
+ This script also groups-by 2010 tracts and sums up 2000 population partials into 2010 reference
+ tracts. This view obscures away 2000 total population and relative 2000 total population 
+ variables available in the [EJ_2016].[EJ_SELECT_VARIABLES_C2000_ACS2014_COMPARE_DEC28] as 
+ this view will be exported to excel for analysis. 
+ 
+ Created On: 12/30/2016
+ Created By: Josh Croff 
+ */
+--==============================================================================================
+
+USE [gis]
+GO
+
+CREATE VIEW [EJ_2016].[year_2000_2010_change_DEC30UPD]
+AS 
+SELECT [GEOID10]
+      ,[county]
+      ,[TotalPop_ACS2014]
+      ,SUM([Relative_Pop_2000]) as Pop_2000
+      ,[White_Alone_2014]
+      ,SUM([Relative_White_Alone_2000]) as White_Alone_2000
+      ,[Black_Alone_2014]
+      ,SUM([Relative_Black_Alone_2000]) as Black_Alone_2000 
+      ,[Hispanic_Alone_2014]
+      ,SUM([Relative_Hispanic_Alone_2000]) as Hispanic_Alone_2000
+      ,[Asian_Pacific_Islander_2014]
+      ,SUM([Relative_Asian_Pacific_Islander_2000]) as Asian_Pacific_Islander_2000
+      ,[POP_ZVHHS_ACS2014]
+      ,SUM([Relative_Pop_ZVHHS_2000]) as Pop_ZVHHS_2000
+      ,[POP_LEP_ACS2014]
+      ,SUM([Relative_Pop_LEP_2000]) as Pop_LEP_2000
+      ,[SPFAM_ACS2014]
+      ,SUM([Relative_SPFAM_2000]) as SPFAM_2000
+      ,[POP_HUS_RENT50_ACS2014]
+      ,SUM([Relative_Pop_HUS_RENT50_2000]) as HUS_RENT50_2000
+      ,[Pop65plus_ACS2014]
+      ,SUM([Relative_Pop65Plus_2000]) as Pop65Plus_2000
+      ,[Veterans_ACS2014]
+      ,SUM([Relative_Veterans_2000]) as Veterans_2000
+      ,[DisabledPop_ACS2014]
+      ,SUM([Relative_DisabledPop_2000]) as DisabledPop_2000
+      ,[LowIncomePop_ACS2014]
+      ,SUM([Relative_LowIncomePop_2000]) as LowIncomePop_2000
+      ,[MinorityPopulation_ACS2014]
+      ,SUM([Relative_MinorityPop_2000]) as MinorityPop_2000
+	  ,DL.Disadvantage_Level 
+	  ,COC2014.COCFLAG_2017
+  FROM [EJ_2016].[EJ_SELECT_VARIABLES_C2000_ACS2014_COMPARE_DEC28] AS Compare
+	LEFT OUTER JOIN
+	ACS_2014_ALL_COC_DATA_TRACTS AS COC2014 ON Compare.GEOID10 = COC2014.GEOID 
+	LEFT OUTER JOIN
+	DISADVANTAGE_LEVEL AS DL ON Compare.GEOID10 = DL.GEOID
+  group by 
+  [GEOID10]
+      ,[county]
+      ,[TotalPop_ACS2014]
+      ,[White_Alone_2014]
+      ,[Black_Alone_2014]
+      ,[Hispanic_Alone_2014]
+      ,[Asian_Pacific_Islander_2014]
+      ,[POP_ZVHHS_ACS2014]
+      ,[POP_LEP_ACS2014]
+      ,[SPFAM_ACS2014]
+      ,[POP_HUS_RENT50_ACS2014]
+      ,[Pop65plus_ACS2014]
+      ,[Veterans_ACS2014]
+      ,[DisabledPop_ACS2014]
+      ,[LowIncomePop_ACS2014]
+      ,[MinorityPopulation_ACS2014]
+	  ,[Disadvantage_Level]
+	  ,[COCFLAG_2017]
+GO
