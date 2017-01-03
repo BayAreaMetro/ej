@@ -1,0 +1,293 @@
+
+--==============================================================================================
+/*
+Script Purpose: To create a table which provides census variables for 2000 and 2010, in
+terms of 2010 tract boundaries. Data provided within these variables can be used to understand
+changes between 2000 and 2010. 
+
+This script seeks to surface logic used to apportion 2000 census figures to 2010 census tracts
+which may or may not have been split, changed, or motified between 2000 and 2010. 
+
+**Script Adapted from 'ACS Census 2010 to Census 2000 Corespondence.sql'**
+Created On: 12/30/2016
+Created By: Josh Croff 
+*/
+--==============================================================================================
+
+--==============================================================================================
+--Create table with select EJ variables 
+--==============================================================================================
+CREATE TABLE EJ_2016.EJ_SELECT_VARIABLES_C2000_ACS2014_COMPARE_DEC28
+	(
+	GEOID10 nvarchar(11),
+	GEOID00 nvarchar(11), 
+	county int,
+	Part00 varchar, 
+	PopPct00 decimal(18,2), 
+	HuPct00 decimal(18,2), 
+	Pop_2000 float,
+	TotalPop_ACS2014 float, 
+	Relative_Pop_2000 float,
+	White_Alone_2014 int, 
+	White_Alone_2000 decimal(38,6),
+	Relative_White_Alone_2000 float,
+	Black_Alone_2014 int,
+	Black_Alone_2000 decimal(38,6),
+	Relative_Black_Alone_2000 float, 
+	Hispanic_Alone_2014 int,
+	Hispanic_Alone_2000 decimal(38,6),
+	Relative_Hispanic_Alone_2000 float, 
+	Asian_Pacific_Islander_2014 int,
+	Asian_Pacific_Islander_2000 decimal(38,6),
+	Relative_Asian_Pacific_Islander_2000 float, 
+	POP_ZVHHS_ACS2014 int,
+	POP_ZVHHS_2000 decimal(38,6),
+	Relative_Pop_ZVHHS_2000 float, 
+	POP_LEP_ACS2014 int,
+	POP_LEP_2000 decimal(38,6),
+	Relative_Pop_LEP_2000 float, 
+	SPFAM_ACS2014 int,
+	SPFAM_2000 decimal(38,6),
+	Relative_SPFAM_2000 float, 
+	POP_HUS_RENT50_ACS2014 int,
+	POP_HUS_RENT50_2000 decimal(38,6),
+	Relative_Pop_HUS_RENT50_2000 float, 
+	Pop65plus_ACS2014 float,
+	Pop65plus_2000 float,
+	Relative_Pop65Plus_2000 float, 
+	Veterans_ACS2014 float, 
+	Veterans_2000 float,
+	Relative_Veterans_2000 float, 
+	DisabledPop_ACS2014 float, 
+	DisabledPop_2000 float, 
+	Relative_DisabledPop_2000 float, 
+	LowIncomePop_ACS2014 float, 
+	LowIncomePop_2000 float,
+	Relative_LowIncomePop_2000 float, 
+	MinorityPopulation_ACS2014 float,
+	MinorityPop_2000 float,
+	Relative_MinorityPop_2000 float
+	)
+
+--==============================================================================================
+--Insert values into table w/ selected ej variables, using census relationship file to 
+--transform 2000 census figures from 2000 tracts into 2010 tracts, using ratios provided 
+--within relationship file for population and housing units 
+--==============================================================================================
+INSERT INTO [EJ_2016].[EJ_SELECT_VARIABLES_C2000_ACS2014_COMPARE_DEC28]
+(
+[GEOID10],
+[GEOID00], 
+[county],
+[Part00], 
+[PopPct00],
+[HuPct00],  
+[Pop_2000],
+[TotalPop_ACS2014],
+[Relative_Pop_2000],
+[White_Alone_2014],
+[White_Alone_2000],
+[Relative_White_Alone_2000],
+[Black_Alone_2014],
+[Black_Alone_2000], 
+[Relative_Black_Alone_2000], 
+[Hispanic_Alone_2014], 
+[Hispanic_Alone_2000], 
+[Relative_Hispanic_Alone_2000], 
+[Asian_Pacific_Islander_2014], 
+[Asian_Pacific_Islander_2000], 
+[Relative_Asian_Pacific_Islander_2000],
+[POP_ZVHHS_ACS2014],
+[POP_ZVHHS_2000], 
+[Relative_Pop_ZVHHS_2000], 
+[POP_LEP_ACS2014], 
+[POP_LEP_2000], 
+[Relative_Pop_LEP_2000], 
+[SPFAM_ACS2014],
+[SPFAM_2000], 
+[Relative_SPFAM_2000], 
+[POP_HUS_RENT50_ACS2014],
+[POP_HUS_RENT50_2000], 
+[Relative_Pop_HUS_RENT50_2000],
+[Pop65plus_ACS2014], 
+[Pop65plus_2000], 
+[Relative_Pop65Plus_2000],
+[Veterans_ACS2014], 
+[Veterans_2000],
+[Relative_Veterans_2000], 
+[LowIncomePop_ACS2014], 
+[LowIncomePop_2000], 
+[Relative_LowIncomePop_2000], 
+[DisabledPop_ACS2014], 
+[DisabledPop_2000], 
+[Relative_DisabledPop_2000],
+[MinorityPopulation_ACS2014], 
+[MinorityPop_2000], 
+[Relative_MinorityPop_2000]      
+)
+SELECT        
+ACS.GEOID,
+C2K.GEOID,  
+ACS.county,
+rel.PART00,
+rel.POPPCT00, 
+rel.HUPCT00,   
+c2k.TotalPopulation AS C2KPOP,
+ACS.TotalPopulation AS ACSPOP,
+
+CASE 
+	WHEN rel.PART00 = 'W' 
+		THEN C2K.TotalPopulation
+	WHEN (rel.PART00 = 'P' AND rel.POPPCT00 = 0) 
+		THEN NULL  
+	ELSE Round((Rel.POPPCT00 / 100) * C2K.TotalPopulation, 0) --Relative_Pop_2000  
+END,
+
+ACS.Total_White_Alone,                                         --White_Alone_2014  
+C2k.White_Alone,                                               --White_Alone_2000 
+CASE 
+	WHEN rel.PART00 = 'W' 
+		THEN C2K.White_Alone
+	WHEN (rel.PART00 = 'P' AND rel.POPPCT00 = 0) 
+		THEN NULL
+	ELSE Round((Rel.POPPCT00 / 100) * C2K.White_Alone, 0)    --Relative_White_Alone_2000
+END,
+
+ACS.Total_Black_Alone,                                        --Black_Alone_2014 
+C2k.Black_Alone,                                              --Black_Alone_2000
+CASE 
+	WHEN rel.PART00 = 'W' 
+		THEN C2K.Black_Alone
+	WHEN (rel.PART00 = 'P' AND rel.POPPCT00 = 0) 
+		THEN NULL
+	ELSE Round((Rel.POPPCT00 / 100) * C2K.Black_Alone, 0)   --Relative_Black_Alone_2000 
+END,
+
+ACS.Total_Hispanic_Latino,                                   --Hispanic_Alone_2014 
+C2k.Hispanic_Latino,                                         --Hispanic_Alone_2000 
+CASE 
+	WHEN rel.PART00 = 'W' 
+		THEN C2k.Hispanic_Latino 
+	WHEN (rel.PART00 = 'P' AND rel.POPPCT00 = 0) 
+		THEN NULL
+	ELSE Round((Rel.POPPCT00 / 100) * C2k.Hispanic_Latino, 0) --Relative_Hispanic_Alone_2000
+END,
+
+ACS.Total_Asian_Pacific_Islander,                              --Asian_Pacific_Islander_2014
+C2k.Asian_Pacific_Islander,                                    --Asian_Pacific_Islander_2000 
+CASE 
+	WHEN rel.PART00 = 'W' 
+		THEN C2k.Asian_Pacific_Islander 
+	WHEN (rel.PART00 = 'P' AND rel.POPPCT00 = 0) 
+		THEN NULL  
+	ELSE Round((Rel.POPPCT00 / 100) * (C2k.Asian_Pacific_Islander), 0) --Relative_Asian_Pacific_Islander_2000
+END,
+
+--Add other variables in this section
+ 
+zvhh2014.POP_ZVHHS,                                             --POP_ZVHHS_ACS2014
+zvhh2000.POP_ZVHHS,                                             --POP_ZVHHS_2000
+CASE 
+	WHEN rel.PART00 = 'W' 
+		THEN zvhh2000.POP_ZVHHS
+	WHEN (rel.PART00 = 'P' AND rel.HUPCT00 = 0) 
+		THEN NULL
+	ELSE Round((rel.HUPCT00 / 100) * (zvhh2000.POP_ZVHHS), 0) --Relative_Pop_ZVHHS_2000 
+END,
+
+ACS.POP_LEP,                                                   --POP_LEP_ACS2014 
+C2k.POP_LEP,                                                   --POP_LEP_2000
+CASE 
+	WHEN rel.PART00 = 'W' 
+		THEN C2k.POP_LEP 
+	WHEN (rel.PART00 = 'P' AND rel.POPPCT00 = 0)
+		THEN NULL
+	ELSE Round((rel.POPPCT00 / 100) * (C2k.POP_LEP), 0)       --Relative_Pop_LEP_2000
+END,
+
+ACS14upd.SPFAM,                                                --SPFAM_ACS2014
+C2kupd.SPFAM,                                                  --SPFAM_2000
+CASE 
+	WHEN rel.PART00 = 'W' 
+		THEN C2Kupd.SPFAM 
+	WHEN (rel.PART00 = 'P' AND rel.HUPCT00 = 0) 
+		THEN NULL
+	ELSE Round((rel.HUPCT00 / 100) * (C2Kupd.SPFAM), 0)       --Relative_SPFAM_2000
+END, 
+
+ACS14upd.POP_HUS_RENT50,                                        --POP_HUS_RENT50_ACS2014
+C2Kupd.POP_HUS_RENT50,                                          --POP_HUS_RENT50_2000
+CASE 
+	WHEN rel.PART00 = 'W' 
+		THEN C2Kupd.POP_HUS_RENT50
+	WHEN (rel.PART00 = 'P' AND rel.HUPCT00 = 0)
+		THEN NULL
+	ELSE Round((rel.HUPCT00 / 100) * (C2Kupd.POP_HUS_RENT50), 0) --Relative_Pop_HUS_RENT50_2000
+END,
+--End of additional section
+
+ACS.PopAge65plus,                                                --Pop65Plus_ACS2014
+C2k.Pop65plus,                                                   --Pop65Plus_2000 
+CASE 
+	WHEN rel.PART00 = 'W' 
+		THEN C2k.Pop65plus 
+	WHEN (rel.PART00 = 'P' AND rel.POPPCT00 = 0) 
+		THEN NULL
+	ELSE Round((Rel.POPPCT00 / 100) * C2K.Pop65plus, 0)         --Relative_Pop65Plus_2000  
+END, 
+
+ACS.Veterans,                                                    --Veterans_ACS2014
+C2k.Veterans,                                                    --Veterans_2000 
+CASE 
+	WHEN rel.PART00 = 'W' 
+		THEN C2K.Veterans 
+	WHEN (rel.PART00 = 'P' AND rel.POPPCT00 = 0) 
+		THEN NULL
+	ELSE Round((Rel.POPPCT00 / 100) * C2K.Veterans, 0)         --Relative_Veterans_2000
+END,
+
+ACS.LowIncomePop,                                                --LowIncomePop_ACS2014
+C2K.LowIncomePopulation,                                         --LowIncomePop_2000
+CASE 
+	WHEN rel.PART00 = 'W' 
+		THEN C2K.LowIncomePopulation 
+	WHEN (rel.PART00 = 'P' AND rel.POPPCT00 = 0) 
+		THEN NULL 
+	ELSE Round((Rel.POPPCT00 / 100) * C2K.LowIncomePopulation, 0) --Relative_LowIncomePop_2000 
+END,
+
+ACS.DisabledPop,                                                   --DisabledPop_ACS2014
+C2K.DisabledPop,                                                   --DisabledPop_2000
+CASE 
+	WHEN rel.PART00 = 'W'
+		THEN C2K.DisabledPop 
+	WHEN (rel.PART00 = 'P' AND rel.POPPCT00 = 0) 
+		THEN NULL
+	ELSE Round((Rel.POPPCT00 / 100) * C2K.DisabledPop, 0)         --Relative_DisabledPop_2000 
+END,
+
+ACS.MinorityPopulation,                                            --MinorityPopulation_ACS2014
+C2K.Minority_Population,                                           --MinorityPopulation_2000
+CASE 
+	WHEN rel.PART00 = 'W' 
+		THEN C2K.Minority_Population 
+	WHEN (rel.PART00 = 'P' AND rel.POPPCT00 = 0) 
+		THEN NULL 
+	ELSE Round((Rel.POPPCT00 / 100) * C2K.Minority_Population, 0)  --Relative_MinorityPopulation_2000 
+END 
+
+FROM            
+EJ_2016.ACS_2014_EJ_Selected_Variables AS ACS 
+INNER JOIN
+[EJ_2016].[CensusTractRelationshipFile] AS rel ON ACS.GEOID = rel.GEOID10 
+LEFT OUTER JOIN
+Census2000_EJ_SelectedVariables AS C2K ON rel.GEOID00 = C2K.GEOID
+LEFT OUTER JOIN
+[EJ_2016].[update_2000_sf3_dec22] as C2Kupd ON rel.GEOID10 = CONCAT (C2Kupd.state, C2Kupd.county, C2Kupd.tract)
+LEFT OUTER JOIN 
+[EJ_2016].[update_2014_acs_dec22] AS ACS14upd on rel.GEOID10 = CONCAT (ACS14upd.state, ACS14upd.county, ACS14upd.tract) 
+LEFT OUTER JOIN
+[EJ_2016].[ACS5_2014_ZEROVEHICLEHHS] AS zvhh2014 on rel.GEOID10 = zvhh2014.GEOID
+LEFT OUTER JOIN 
+[EJ_2016].[CENSUS_2K_ZEROVEHICLEHHS] AS zvhh2000 on rel.GEOID10 = zvhh2000.GEOID 
+
