@@ -1,0 +1,204 @@
+--===============================================================================
+/*
+Script Purpose: 
+
+1. Create view from year 2000 2010 change table containing object id and 
+   spatial data columns 
+2. Update population percentage change calculation 
+
+Created On: 12/19/2016
+Created By: Joshua Croff
+*/ 
+--===============================================================================
+
+--===============================================================================
+--Create view from year_2000_2010_Change table, including OBJECTID and 
+--Spatial data column  
+--===============================================================================
+
+CREATE VIEW EJ_2016_ACS_2000_2010_Chng_Spatial 
+AS
+SELECT        
+	ACS_2010_URBANIZED_TRACTS.OBJECTID, 
+	ACS_2010_URBANIZED_TRACTS.SHAPE, 
+	year_2000_2010_change.*
+FROM year_2000_2010_change 
+LEFT OUTER JOIN
+ACS_2010_URBANIZED_TRACTS ON year_2000_2010_change.GEOID = ACS_2010_URBANIZED_TRACTS.GEOID
+
+PRINT 'Create view from year_2000_2010_Change table including OBJECTID and Spatial data column' 
+
+--===============================================================================
+--Update Low Income Population Percentage Change  
+--===============================================================================
+
+UPDATE [gis].[EJ_2016].[EJ_2016_ACS_2000_2010_Chng_Spatial]
+	SET [LowIncomePopPctChange] = 
+		CASE
+			WHEN [TotalPop_ACS2014] = 0 OR [Pop_2000] = 0 OR [LowIncomePop_2000] = 0 OR [LowIncomePop_ACS2014] = 0 THEN  NULL
+			ELSE ((([LowIncomePop_ACS2014]/[TotalPop_ACS2014]) - ([LowIncomePop_2000]/[Pop_2000]))/([LowIncomePop_2000]/[Pop_2000])) * 100 
+		END 
+
+PRINT 'Updated Low Income Population Percentage Change'
+
+--SELECT [TotalPop_ACS2014], [LowIncomePop_ACS2014], [Pop_2000], [LowIncomePop_2000], [LowIncomePopPctChange]  
+--FROM [gis].[EJ_2016].[EJ_2016_ACS_2000_2010_Chng_Spatial]
+
+--===============================================================================
+--Update Minority Population Percentage Change  
+--===============================================================================
+
+UPDATE [gis].[EJ_2016].[EJ_2016_ACS_2000_2010_Chng_Spatial]
+	SET [MinorityPopPctChange] = 
+		CASE
+			WHEN [TotalPop_ACS2014] = 0 OR [Pop_2000] = 0 OR [MinorityPop_2000] = 0 OR [MinorityPopulation_ACS2014] = 0 THEN NULL  
+			ELSE ((([MinorityPopulation_ACS2014]/[TotalPop_ACS2014]) - ([MinorityPop_2000]/[Pop_2000]))/([MinorityPop_2000]/[Pop_2000])) * 100  
+		END
+
+PRINT 'Updated Minority Population Percentage Change'
+ 
+--SELECT [TotalPop_ACS2014], [MinorityPopulation_ACS2014], [Pop_2000], [MinorityPop_2000], [MinorityPopPctChange] 
+--FROM [gis].[EJ_2016].[EJ_2016_ACS_2000_2010_Chng_Spatial]
+
+--===============================================================================
+--Update Population 65 + Percentage Change  
+--===============================================================================
+
+UPDATE [gis].[EJ_2016].[EJ_2016_ACS_2000_2010_Chng_Spatial]
+	SET [Pop65PlusPctChange] = 
+		CASE
+			WHEN [TotalPop_ACS2014] = 0 OR [Pop_2000] = 0 OR [Pop65Plus_2000] = 0 OR [Pop65Plus_ACS2014] = 0 THEN NULL  
+			ELSE ((([Pop65Plus_ACS2014]/[TotalPop_ACS2014]) - ([Pop65Plus_2000]/[Pop_2000]))/([Pop65Plus_2000]/[Pop_2000])) * 100  
+		END 
+
+PRINT 'Updated Population 65 + Percentage Change'
+
+--SELECT [TotalPop_ACS2014],[Pop65Plus_ACS2014], [Pop_2000], [Pop65Plus_2000], [Pop65PlusPctChange]
+--FROM [gis].[EJ_2016].[EJ_2016_ACS_2000_2010_Chng_Spatial]
+
+--===============================================================================
+--Update Single Parent Family Percentage Change  
+--===============================================================================
+
+UPDATE [gis].[EJ_2016].[EJ_2016_ACS_2000_2010_Chng_Spatial]
+	SET [SPFAM_PctChange] = 
+		CASE
+			WHEN [TotalPop_ACS2014] = 0 OR [Pop_2000] = 0 OR [SPFAM_2000] = 0 OR [SPFAM_ACS2014] = 0 THEN NULL  
+			ELSE ((([SPFAM_ACS2014]/[TotalPop_ACS2014]) - ([SPFAM_2000]/[Pop_2000]))/([SPFAM_2000]/[Pop_2000])) * 100  
+		END 
+
+PRINT 'Updated Single Parent Family Percentage Change' 
+
+--SELECT [TotalPop_ACS2014], [SPFAM_ACS2014], [Pop_2000], [SPFAM_2000], [SPFAM_PctChange] 
+--FROM [gis].[EJ_2016].[EJ_2016_ACS_2000_2010_Chng_Spatial]
+
+--===============================================================================
+--Update Limited English Proficiency Percentage Change  
+--===============================================================================
+
+UPDATE [gis].[EJ_2016].[EJ_2016_ACS_2000_2010_Chng_Spatial]
+	SET [POP_LEP_PctChange] = 
+		CASE
+			WHEN [TotalPop_ACS2014] = 0 OR [Pop_2000] = 0 OR [POP_LEP_2000] = 0 OR [POP_LEP_ACS2014] = 0 THEN NULL  
+			ELSE ((([POP_LEP_ACS2014]/[TotalPop_ACS2014]) - ([POP_LEP_2000]/[Pop_2000]))/([POP_LEP_2000]/[Pop_2000])) * 100  
+		END 
+PRINT 'Updated Limited English Proficiency Percentage Change' 
+
+--SELECT [TotalPop_ACS2014], [POP_LEP_ACS2014], [Pop_2000], [POP_LEP_2000], [POP_LEP_PctChange] 
+--FROM [gis].[EJ_2016].[EJ_2016_ACS_2000_2010_Chng_Spatial]
+
+--===============================================================================
+--Update Zero Vehicle Household Percentage Change  
+--===============================================================================
+
+UPDATE [gis].[EJ_2016].[EJ_2016_ACS_2000_2010_Chng_Spatial]
+	SET [POP_ZVHHS_PctChange] = 
+		CASE
+			WHEN [TotalPop_ACS2014] = 0 OR [Pop_2000] = 0 OR [POP_ZVHHS_2000] = 0 OR [POP_ZVHHS_ACS2014] = 0 THEN NULL  
+			ELSE ((([POP_ZVHHS_ACS2014]/[TotalPop_ACS2014]) - ([POP_ZVHHS_2000]/[Pop_2000]))/([POP_ZVHHS_2000]/[Pop_2000])) * 100  
+		END 
+
+PRINT 'Updated Zero Vehicle Household Percentage Change' 
+
+--SELECT [TotalPop_ACS2014], [POP_ZVHHS_ACS2014], [Pop_2000], [POP_ZVHHS_2000], [POP_ZVHHS_PctChange] 
+--FROM [gis].[EJ_2016].[EJ_2016_ACS_2000_2010_Chng_Spatial]
+
+--===============================================================================
+--Update Rent Burdened Household Percentage Change  
+--===============================================================================
+
+UPDATE [gis].[EJ_2016].[EJ_2016_ACS_2000_2010_Chng_Spatial]
+	SET [RENT50_PctChange] = 
+		CASE
+			WHEN [TotalPop_ACS2014] = 0 OR [Pop_2000] = 0 OR [POP_HUS_RENT50_2000] = 0 OR [POP_HUS_RENT50_ACS2014] = 0 THEN NULL  
+			ELSE ((([POP_HUS_RENT50_ACS2014]/[TotalPop_ACS2014]) - ([POP_HUS_RENT50_2000]/[Pop_2000]))/([POP_HUS_RENT50_2000]/[Pop_2000])) * 100  
+		END
+		
+PRINT 'Updated Rent Burdened Households Percentage Change'  
+
+--SELECT [TotalPop_ACS2014], [POP_HUS_RENT50_ACS2014], [Pop_2000], [POP_HUS_RENT50_2000], [RENT50_PctChange] 
+--FROM [gis].[EJ_2016].[EJ_2016_ACS_2000_2010_Chng_Spatial]
+
+--===============================================================================
+--Update Asian Pacific Islander Population Percentage Change  
+--===============================================================================
+
+UPDATE [gis].[EJ_2016].[EJ_2016_ACS_2000_2010_Chng_Spatial]
+	SET [AsianPacificPopPctChange] = 
+		CASE
+			WHEN [TotalPop_ACS2014] = 0 OR [Pop_2000] = 0 OR [Asian_Pacific_Islander_2000] = 0 OR [Asian_Pacific_Islander_2014] = 0 THEN NULL  
+			ELSE ((([Asian_Pacific_Islander_2014]/[TotalPop_ACS2014]) - ([Asian_Pacific_Islander_2000]/[Pop_2000]))/([Asian_Pacific_Islander_2000]/[Pop_2000])) * 100  
+		END
+		
+PRINT 'Updated Asian Pacific Islander Population Percentage Change'  
+
+--SELECT [TotalPop_ACS2014], [Asian_Pacific_Islander_2014], [Pop_2000], [Asian_Pacific_Islander_2000], [AsianPacificPopPctChange] 
+--FROM [gis].[EJ_2016].[EJ_2016_ACS_2000_2010_Chng_Spatial]
+
+--===============================================================================
+--Update Black Population Percentage Change  
+--===============================================================================
+
+UPDATE [gis].[EJ_2016].[EJ_2016_ACS_2000_2010_Chng_Spatial]
+	SET [BlackAlonePopPctChange] = 
+		CASE
+			WHEN [TotalPop_ACS2014] = 0 OR [Pop_2000] = 0 OR [Black_Alone_2000] = 0 OR [Black_Alone_2014] = 0 THEN NULL  
+			ELSE ((([Black_Alone_2014]/[TotalPop_ACS2014]) - ([Black_Alone_2000]/[Pop_2000]))/([Black_Alone_2000]/[Pop_2000])) * 100  
+		END 
+
+PRINT 'Updated Black Population Percentage Change' 
+
+--SELECT [TotalPop_ACS2014], [Black_Alone_2014], [Pop_2000], [Black_Alone_2000],[BlackAlonePopPctChange]  
+--FROM [gis].[EJ_2016].[EJ_2016_ACS_2000_2010_Chng_Spatial]
+
+--===============================================================================
+--Update White Population Percentage Change  
+--===============================================================================
+
+UPDATE [gis].[EJ_2016].[EJ_2016_ACS_2000_2010_Chng_Spatial]
+	SET [WhiteAlonePopPctChange] = 
+		CASE
+			WHEN [TotalPop_ACS2014] = 0 OR [Pop_2000] = 0 OR [White_Alone_2000] = 0 OR [White_Alone_2014] = 0 THEN NULL  
+			ELSE ((([White_Alone_2014]/[TotalPop_ACS2014]) - ([White_Alone_2000]/[Pop_2000]))/([White_Alone_2000]/[Pop_2000])) * 100  
+		END
+		
+PRINT 'Updated White Population Percentage Change'  
+
+--SELECT [TotalPop_ACS2014], [White_Alone_2014], [Pop_2000], [White_Alone_2000], [WhiteAlonePopPctChange]
+--FROM [gis].[EJ_2016].[EJ_2016_ACS_2000_2010_Chng_Spatial]
+
+--===============================================================================
+--Update Hispanic and Latino Population Percentage Change  
+--===============================================================================
+
+UPDATE [gis].[EJ_2016].[EJ_2016_ACS_2000_2010_Chng_Spatial]
+	SET [HispanicLatinoPopPctChange] = 
+		CASE
+			WHEN [TotalPop_ACS2014] = 0 OR [Pop_2000] = 0 OR [Hispanic_Alone_2000] = 0 OR [Hispanic_Alone_2014] = 0 THEN NULL  
+			ELSE ((([Hispanic_Alone_2014]/[TotalPop_ACS2014]) - ([Hispanic_Alone_2000]/[Pop_2000]))/([Hispanic_Alone_2000]/[Pop_2000])) * 100  
+		END
+		
+PRINT 'Updated Hispanic and Latino Population Percentage Change'  
+
+--SELECT [TotalPop_ACS2014], [White_Alone_2014], [Pop_2000], [White_Alone_2000], [WhiteAlonePopPctChange]
+--FROM [gis].[EJ_2016].[EJ_2016_ACS_2000_2010_Chng_Spatial]
