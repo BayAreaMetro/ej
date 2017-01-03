@@ -137,9 +137,9 @@ ACS.TotalPopulation AS ACSPOP,
 
 CASE 
 	WHEN rel.PART00 = 'W' 
-		THEN C2K.TotalPopulation  
-	WHEN (rel.PART00 = 'P' AND rel.POPPCT00 = 0) 
 		THEN C2K.TotalPopulation
+	WHEN (rel.PART00 = 'P' AND rel.POPPCT00 = 0) 
+		THEN NULL  
 	ELSE Round((Rel.POPPCT00 / 100) * C2K.TotalPopulation, 0) --Relative_Pop_2000  
 END,
 
@@ -149,7 +149,7 @@ CASE
 	WHEN rel.PART00 = 'W' 
 		THEN C2K.White_Alone
 	WHEN (rel.PART00 = 'P' AND rel.POPPCT00 = 0) 
-		THEN C2K.White_Alone
+		THEN NULL
 	ELSE Round((Rel.POPPCT00 / 100) * C2K.White_Alone, 0)    --Relative_White_Alone_2000
 END,
 
@@ -159,7 +159,7 @@ CASE
 	WHEN rel.PART00 = 'W' 
 		THEN C2K.Black_Alone
 	WHEN (rel.PART00 = 'P' AND rel.POPPCT00 = 0) 
-		THEN C2K.Black_Alone 
+		THEN NULL
 	ELSE Round((Rel.POPPCT00 / 100) * C2K.Black_Alone, 0)   --Relative_Black_Alone_2000 
 END,
 
@@ -167,9 +167,9 @@ ACS.Total_Hispanic_Latino,                                   --Hispanic_Alone_20
 C2k.Hispanic_Latino,                                         --Hispanic_Alone_2000 
 CASE 
 	WHEN rel.PART00 = 'W' 
-		THEN C2K.Black_Alone
+		THEN C2k.Hispanic_Latino 
 	WHEN (rel.PART00 = 'P' AND rel.POPPCT00 = 0) 
-		THEN C2K.Black_Alone
+		THEN NULL
 	ELSE Round((Rel.POPPCT00 / 100) * C2k.Hispanic_Latino, 0) --Relative_Hispanic_Alone_2000
 END,
 
@@ -177,9 +177,9 @@ ACS.Total_Asian_Pacific_Islander,                              --Asian_Pacific_I
 C2k.Asian_Pacific_Islander,                                    --Asian_Pacific_Islander_2000 
 CASE 
 	WHEN rel.PART00 = 'W' 
-		THEN C2K.Black_Alone 
+		THEN C2k.Asian_Pacific_Islander 
 	WHEN (rel.PART00 = 'P' AND rel.POPPCT00 = 0) 
-		THEN C2K.Black_Alone
+		THEN NULL  
 	ELSE Round((Rel.POPPCT00 / 100) * (C2k.Asian_Pacific_Islander), 0) --Relative_Asian_Pacific_Islander_2000
 END,
 
@@ -191,7 +191,7 @@ CASE
 	WHEN rel.PART00 = 'W' 
 		THEN zvhh2000.POP_ZVHHS
 	WHEN (rel.PART00 = 'P' AND rel.HUPCT00 = 0) 
-		THEN zvhh2000.POP_ZVHHS
+		THEN NULL
 	ELSE Round((rel.HUPCT00 / 100) * (zvhh2000.POP_ZVHHS), 0) --Relative_Pop_ZVHHS_2000 
 END,
 
@@ -200,8 +200,8 @@ C2k.POP_LEP,                                                   --POP_LEP_2000
 CASE 
 	WHEN rel.PART00 = 'W' 
 		THEN C2k.POP_LEP 
-	WHEN (rel.PART00 = 'P' AND rel.POPPCT00 = 0) 
-		THEN C2k.POP_LEP 
+	WHEN (rel.PART00 = 'P' AND rel.POPPCT00 = 0)
+		THEN NULL
 	ELSE Round((rel.POPPCT00 / 100) * (C2k.POP_LEP), 0)       --Relative_Pop_LEP_2000
 END,
 
@@ -209,9 +209,9 @@ ACS14upd.SPFAM,                                                --SPFAM_ACS2014
 C2kupd.SPFAM,                                                  --SPFAM_2000
 CASE 
 	WHEN rel.PART00 = 'W' 
-		THEN C2Kupd.SPFAM
+		THEN C2Kupd.SPFAM 
 	WHEN (rel.PART00 = 'P' AND rel.HUPCT00 = 0) 
-		THEN C2Kupd.SPFAM
+		THEN NULL
 	ELSE Round((rel.HUPCT00 / 100) * (C2Kupd.SPFAM), 0)       --Relative_SPFAM_2000
 END, 
 
@@ -219,9 +219,9 @@ ACS14upd.POP_HUS_RENT50,                                        --POP_HUS_RENT50
 C2Kupd.POP_HUS_RENT50,                                          --POP_HUS_RENT50_2000
 CASE 
 	WHEN rel.PART00 = 'W' 
-		THEN C2Kupd.SPFAM
-	WHEN (rel.PART00 = 'P' AND rel.HUPCT00 = 0) 
-		THEN C2Kupd.POP_HUS_RENT50 
+		THEN C2Kupd.POP_HUS_RENT50
+	WHEN (rel.PART00 = 'P' AND rel.HUPCT00 = 0)
+		THEN NULL
 	ELSE Round((rel.HUPCT00 / 100) * (C2Kupd.POP_HUS_RENT50), 0) --Relative_Pop_HUS_RENT50_2000
 END,
 --End of additional section
@@ -229,40 +229,50 @@ END,
 ACS.PopAge65plus,                                                --Pop65Plus_ACS2014
 C2k.Pop65plus,                                                   --Pop65Plus_2000 
 CASE 
-	WHEN rel.PART00 = 'W' OR (rel.PART00 = 'P' AND rel.POPPCT00 = 0) 
-		THEN C2K.Pop65plus
+	WHEN rel.PART00 = 'W' 
+		THEN C2k.Pop65plus 
+	WHEN (rel.PART00 = 'P' AND rel.POPPCT00 = 0) 
+		THEN NULL
 	ELSE Round((Rel.POPPCT00 / 100) * C2K.Pop65plus, 0)         --Relative_Pop65Plus_2000  
 END, 
 
 ACS.Veterans,                                                    --Veterans_ACS2014
 C2k.Veterans,                                                    --Veterans_2000 
 CASE 
-	WHEN rel.PART00 = 'W' OR (rel.PART00 = 'P' AND rel.POPPCT00 = 0) 
-		THEN C2K.Veterans
+	WHEN rel.PART00 = 'W' 
+		THEN C2K.Veterans 
+	WHEN (rel.PART00 = 'P' AND rel.POPPCT00 = 0) 
+		THEN NULL
 	ELSE Round((Rel.POPPCT00 / 100) * C2K.Veterans, 0)         --Relative_Veterans_2000
 END,
 
 ACS.LowIncomePop,                                                --LowIncomePop_ACS2014
 C2K.LowIncomePopulation,                                         --LowIncomePop_2000
 CASE 
-	WHEN rel.PART00 = 'W' OR (rel.PART00 = 'P' AND rel.POPPCT00 = 0) 
+	WHEN rel.PART00 = 'W' 
 		THEN C2K.LowIncomePopulation 
+	WHEN (rel.PART00 = 'P' AND rel.POPPCT00 = 0) 
+		THEN NULL 
 	ELSE Round((Rel.POPPCT00 / 100) * C2K.LowIncomePopulation, 0) --Relative_LowIncomePop_2000 
 END,
 
 ACS.DisabledPop,                                                   --DisabledPop_ACS2014
 C2K.DisabledPop,                                                   --DisabledPop_2000
 CASE 
-	WHEN rel.PART00 = 'W' OR (rel.PART00 = 'P' AND rel.POPPCT00 = 0) 
+	WHEN rel.PART00 = 'W'
 		THEN C2K.DisabledPop 
+	WHEN (rel.PART00 = 'P' AND rel.POPPCT00 = 0) 
+		THEN NULL
 	ELSE Round((Rel.POPPCT00 / 100) * C2K.DisabledPop, 0)         --Relative_DisabledPop_2000 
 END,
 
 ACS.MinorityPopulation,                                            --MinorityPopulation_ACS2014
 C2K.Minority_Population,                                           --MinorityPopulation_2000
 CASE 
-	WHEN rel.PART00 = 'W' OR (rel.PART00 = 'P' AND rel.POPPCT00 = 0) 
-		THEN C2K.Minority_Population  
+	WHEN rel.PART00 = 'W' 
+		THEN C2K.Minority_Population 
+	WHEN (rel.PART00 = 'P' AND rel.POPPCT00 = 0) 
+		THEN NULL 
 	ELSE Round((Rel.POPPCT00 / 100) * C2K.Minority_Population, 0)  --Relative_MinorityPopulation_2000 
 END 
 
@@ -280,3 +290,4 @@ LEFT OUTER JOIN
 [EJ_2016].[ACS5_2014_ZEROVEHICLEHHS] AS zvhh2014 on rel.GEOID10 = zvhh2014.GEOID
 LEFT OUTER JOIN 
 [EJ_2016].[CENSUS_2K_ZEROVEHICLEHHS] AS zvhh2000 on rel.GEOID10 = zvhh2000.GEOID 
+
