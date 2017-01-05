@@ -11,7 +11,7 @@ year_2000_2010_change_DEC30UPD
 
 `map_tables/` contains deprecated table creation scripts for the first round of maps  
 
-the following were used in a previous iteration of the output summary tables. now that it is clear that the user is strictly interested in using the tables to compare individual census tracts and to make comparisons, @joshuacroft simplified the output to one table as found in the root directory   
+the following were used in a previous iteration of the output summary tables. now that it is clear that the user is strictly interested in using the tables to compare individual census tracts and to make comparisons, @joshuacroff simplified the output to one table as found in the root directory   
 
 ```
 deprecated/CREATE_2000_2010_CHANGE_TABLE.sql  
