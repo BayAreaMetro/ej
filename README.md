@@ -1,13 +1,13 @@
 # ej
 SQL queries for MTC's Environmental Justice Data and Maps
 
-###main query files:
+### main query files:
 
 EJ_SELECT_VARIABLES_C2000_ACS2014_COMPARE_DEC28   
 update_select_change_vars.sql  
 year_2000_2010_change_DEC30UPD  
 
-###folders: 
+### folders: 
 
 `map_tables/` contains deprecated table creation scripts for the first round of maps  
 
